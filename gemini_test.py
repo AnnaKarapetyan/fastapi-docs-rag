@@ -24,9 +24,12 @@ def ask_llm(prompt):
     return None
 
 def answer(question):
+    if not question.strip():
+        return {"answer": "Please enter a question", "sources": [], "sources_used": [], "distance": None}
     result= retrieve(question, 8)
+    distance = result[0]["distance"] if result else None
     if not result or result[0]["distance"] > Threshold:
-        return {"answer": "Answer is not available in sources", "sources": [], "sources_used": []}
+        return {"answer": "Answer is not available in sources", "sources": [], "sources_used": [], "distance": distance}
     parts = []
     sources = []
     for i,ch in enumerate(result):
@@ -52,7 +55,7 @@ Question: {question}
 Answer:"""
     text = ask_llm(prompt)
     if text is None:
-        return {"answer": "Service is temporarily unavailable, try again later", "sources": sources, "sources_used": []}
+        return {"answer": "Service is temporarily unavailable, try again later", "sources": sources, "sources_used": [], "distance": distance}
     pieces = text.rsplit("Sources:", 1)
     if len(pieces) == 1:
         pieces = pieces[0].rsplit("Источники:", 1)
@@ -64,7 +67,7 @@ Answer:"""
         for  n in Sources_used_N:
             sources_used.append(sources[n])
         sources_used = list(set(sources_used))
-    return {"answer": pieces[0].strip(),"sources" : sources, "sources_used": sources_used}
+    return {"answer": pieces[0].strip(),"sources" : sources, "sources_used": sources_used, "distance": distance}
 
 if __name__ == "__main__":
     test_questions = [
