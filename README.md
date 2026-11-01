@@ -4,7 +4,7 @@ Ask a question about FastAPI and get an answer with links to the docs pages it c
 
 ## How it works
 
-1. Your question is turned into embedding vector.
+1. Your question is turned into an embedding vector.
 2. The 8 closest pieces of the FastAPI docs are found in ChromaDB.
 3. If the closest piece is too far (distance > 0.4), the system says there is no answer.
 4. Otherwise Gemini answers using only those pieces and returns the sources it used.
